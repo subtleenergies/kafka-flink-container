@@ -1,29 +1,24 @@
-# Apache Flink 101
+# Kafka/Flink container
 
-This repository is for the exericses in the [Apache Flink 101](https://developer.confluent.io/courses/apache-flink/intro/) course hosted on Confluent Developer.
+Forked from a repository for the exericses in the [Apache Flink 101](https://developer.confluent.io/courses/apache-flink/intro/) course hosted on Confluent Developer, 
+this repo provides Kafka and Flink in a container.
 
-It uses Docker Compose to start up Kafka, Flink, and Flink's SQL CLI.
+Changes from the original include:
+- addition of opensearch
+- kafka broker port 9092 is mapped to the host machine to enable connections to Kafka from outside the container
+- a `scripts` directory is added with shortcut scripts
 
-## Launch
+## Set-up
 
-First build the image and start all of the containers:
+- Install [Docker desktop](https://www.docker.com/products/docker-desktop/)
+- Run the host machine setup script: `./scripts/set-up.sh`
+- Start the container: `./scripts/start.sh`
 
-```bash
-docker compose up --build -d
-```
-
-Once the containers are running,
-
-```bash
-docker compose run sql-client
-```
-
-will drop you into the Flink SQL Client, where you can interact with Flink SQL.
 
 ## Shutdown
 
 When you're done, this will shutdown all of the containers and delete the volume that was created for checkpointing:
 
 ```bash
-docker compose down -v
+./scripts/stop.sh
 ```
