@@ -45,6 +45,7 @@ services:
     build: .
     ports:
       - "127.0.0.1:8081:8081"
+      - "127.0.0.1:5005:5005"
     command: jobmanager
     volumes:
       - flink_data:/tmp/
@@ -58,6 +59,7 @@ services:
         heartbeat.timeout: 5000
         rest.flamegraph.enabled: true
         web.backpressure.refresh-interval: 10000
+        env.java.opts.jobmanager: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
 
   taskmanager:
     build: .
@@ -84,6 +86,7 @@ services:
       - node.name=opensearch-node # Name the node that will run in this container
       - discovery.type=single-node
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Gsx9kmgv'ou    # Sets the demo admin user password when using demo configuration, required for OpenSearch 2.12 and later
+      - DISABLE_SECURITY_PLUGIN=true
     ulimits:
       memlock:
         soft: -1 # Set memlock to unlimited (no soft or hard limit)
@@ -101,11 +104,12 @@ services:
     image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
     container_name: opensearch-dashboards
     ports:
-      - 5601:5601 # Map host port 5601 to container port 5601
+      - "127.0.0.1:5601:5601" # Map host port 5601 to container port 5601
     expose:
       - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
     environment:
-      OPENSEARCH_HOSTS: '["https://opensearch-node:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+      OPENSEARCH_HOSTS: '["http://opensearch-node:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: true
 
 volumes:
   flink_data:
